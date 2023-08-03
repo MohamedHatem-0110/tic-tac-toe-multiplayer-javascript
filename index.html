@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Tick-Tac-Toe</h1>
+
+    <h1 class="purples">Tic-Tac-Toe</h1>
 
     <div>
 
@@ -20,14 +21,14 @@
         You are playing as <span id="value"></span>
     </p>
     <br>
-    <p id="whosTurn">X's Turn</p>
+    <p class="mint" id="whosTurn">X's Turn</p>
 
     <div>
         <p id="enterName">Enter your Name : </p>
         <input type="text" name="Name" id="name" autocomplete="off">
     </div>
 
-    <button id="find">Search for a player</button>
+    <button class="glow-on-hover" id="find">Search for a player</button>
     <img src="loading.gif" id="loading">
 
 
@@ -59,6 +60,7 @@
     const socket = io();
 
     let name;
+    let turn;
 
     document.getElementById("find").addEventListener("click",function(){
         name = document.getElementById("name").value
@@ -108,10 +110,25 @@
             foundObj.p1.p1name == `${name}` ? oppName = foundObj.p2.p2name : oppName = foundObj.p1.p1name
             foundObj.p1.p1name == `${name}` ? value = foundObj.p1.p1value : value = foundObj.p2.p2value
 
-
+            if(value === "X"){
+                document.getElementById("valueCont").classList.add("mint")
+            } else{
+                document.getElementById("valueCont").classList.add("purples")
+            }
             document.getElementById("oppName").innerText = oppName
             document.getElementById("value").innerText = value
+
+
+
+            console.log(document.getElementById("value").innerText)
+            if (document.getElementById("value").innerText == "O"){
+                document.querySelectorAll(".btn").forEach((btn)=>{
+                    btn.disabled = true
+                })
+    }
         }
+
+
     })
 
 
@@ -135,8 +152,31 @@
         p2id=foundObject.p2.p2move
         if((foundObject.sum)%2 == 0){
             document.getElementById("whosTurn").innerText= "O's Turn"
+            document.getElementById("whosTurn").classList.add("purples")
+            document.getElementById("whosTurn").classList.remove("mint")
+            if(value.innerHTML == "X"){
+                
+                document.querySelectorAll(".btn").forEach((btn)=>{
+                    btn.disabled = true
+                })
+            } else{
+                document.querySelectorAll(".btn").forEach((btn)=>{
+                    btn.disabled = false})
+                
+            }
         }else{
             document.getElementById("whosTurn").innerText= "X's Turn"
+
+            document.getElementById("whosTurn").classList.add("mint")
+            document.getElementById("whosTurn").classList.remove("purples")
+            if(value.innerHTML == "O"){
+                document.querySelectorAll(".btn").forEach((btn)=>{
+                    btn.disabled = true
+                })
+            } else{
+                document.querySelectorAll(".btn").forEach((btn)=>{
+                    btn.disabled = false})
+            }
         }
 
         if(p1id !=''){
@@ -171,7 +211,6 @@
 
         if ((b1 == b2 && b2 == b3) || (b4 == b5 && b5 == b6) || (b7 == b8 && b8 == b9) || (b1 == b4 && b4 == b7) || (b2 == b5 && b5 == b8) || (b3 == b6 && b6 == b9) || (b1 == b5 && b5 == b9) || (b3 == b5 && b5 == b7)) {
             socket.emit("gameOver",{name:name})
-
             setTimeout(()=>{
                 sum%2 == 0? alert("X WON"):alert("O WON")
                 setTimeout(()=>{
@@ -179,6 +218,7 @@
                 },2000)
             },100)
         }else if (sum == 10){
+            socket.emit("gameOver",{name:name})
             setTimeout(()=>{
                 alert("DRAW")
                 setTimeout(()=>{
