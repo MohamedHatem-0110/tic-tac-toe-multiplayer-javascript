@@ -72,6 +72,6 @@ app.get("/", (req, res) => {
   return res.sendFile("index.html");
 });
 
-server.listen(3000, () => {
+server.listen(process.env.PORT || 3000, () => {
   console.log("port 3000");
 });
